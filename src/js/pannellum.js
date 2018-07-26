@@ -1465,6 +1465,11 @@ function render() {
 
         renderHotSpots();
 
+        if (config.rotateCompassLine) {
+            const res = -config.yaw - config.northOffset
+            config.rotateCompassLine(res)
+        }
+
         // Update compass
         if (config.compass || config.compassClass) {
             if (config.compassClass) {
