@@ -1466,9 +1466,18 @@ function render() {
         renderHotSpots();
 
         // Update compass
-        if (config.compass) {
-            compass.style.transform = 'rotate(' + (-config.yaw - config.northOffset) + 'deg)';
-            compass.style.webkitTransform = 'rotate(' + (-config.yaw - config.northOffset) + 'deg)';
+        if (config.compass || config.compassClass) {
+            if (config.compassClass) {
+                const customCompass = document.getElementsByClassName(config.compassClass)[0]
+                if (customCompass) {
+                    const initialTransform = customCompass.style.transform.split(/\s(?=\S+\(.*?\))(?!rotate(?:Y|Z))/)[0]
+                    customCompass.style.transform = `${initialTransform} rotate(${-config.yaw - config.northOffset}deg)`;
+                    customCompass.style.transform = `${initialTransform} rotate(${-config.yaw - config.northOffset}deg)`;
+                }
+            } else {
+                compass.style.transform = 'rotate(' + (-config.yaw - config.northOffset) + 'deg)';
+                compass.style.webkitTransform = 'rotate(' + (-config.yaw - config.northOffset) + 'deg)';
+            }
         }
     }
 }
