@@ -1,17 +1,14 @@
 {
-  "name": "panorelium",
+  "name": "@skyeer/panorelium",
   "description": "panorelium is a lightweight, free, and open source panorama viewer for the web.",
-  "version": "2.4.4",
+  "version": "2.4.5",
   "bugs": {
     "url": "https://github.com/ivan-hilckov/panorelium/issues"
   },
-  "author": {
-    "name": "Ivan Hilckov",
-    "url": "https://github.com/ivan-hilckov"
-  },
+  "author": "Ivan Hilckov (https://github.com/ivan-hilckov)",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ivan-hilckov/panorelium"
+    "url": "git+https://github.com/ivan-hilckov/panorelium.git"
   },
   "license": "MIT",
   "homepage": "https://github.com/ivan-hilckov/panorelium",
@@ -22,5 +19,12 @@
   ],
   "dependencies": {
     "panorelium": "^2.4.2"
+  },
+  "directories": {
+    "doc": "doc",
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
