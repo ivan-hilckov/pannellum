@@ -67,7 +67,11 @@ var config,
     externalEventListeners = {},
     specifiedPhotoSphereExcludes = [],
     update = false, // Should we update when still to render dynamic content
-    hotspotsCreated = false;
+    hotspotsCreated = false,
+    oldYaw = 0,
+    oldPitch = 0,
+    oldHfov = 0,
+    ignoreFirstRenderTick = true;
 
 var defaultConfig = {
     hfov: 100,
@@ -1467,6 +1471,18 @@ function render() {
         if (config.rotateCompassLine) {
             const res = -config.yaw - config.northOffset
             config.rotateCompassLine(res)
+        }
+
+        const { yaw, pitch, hfov } = config
+        if(yaw !== oldYaw || pitch !== oldPitch || hfov !== oldHfov){
+          if(ignoreFirstRenderTick){
+            ignoreFirstRenderTick = false
+          } else {
+            oldYaw = yaw
+            oldPitch = pitch
+            oldHfov = hfov
+            fireEvent('camerachanged', { yaw, pitch, hfov })
+          }
         }
 
         // Update compass
