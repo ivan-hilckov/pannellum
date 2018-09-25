@@ -1245,7 +1245,13 @@ function keyRepeat() {
         prevZoom = config.hfov;
     }
 
-    if(!config.editingMode) {
+    if(config.editingMode) {
+      speed = {
+        yaw: 0,
+        pitch: 0,
+        hfov: 0
+      }
+    } else {
       // "Inertia"
       if (diff > 0 && !config.autoRotate) {
         // "Friction"
