@@ -74,6 +74,7 @@ var config,
     ignoreFirstRenderTick = true;
 
 var defaultConfig = {
+    editingMode: false,
     hfov: 100,
     minHfov: 50,
     maxHfov: 120,
@@ -1209,8 +1210,6 @@ function keyRepeat() {
         latestInteraction = Date.now();
 
     // If auto-rotate
-
-  
     var inactivityInterval = Date.now() - latestInteraction;
     if (config.autoRotate) {
         // Pan
@@ -1244,6 +1243,40 @@ function keyRepeat() {
     if (animatedMove.hfov) {
         animateMove('hfov');
         prevZoom = config.hfov;
+    }
+
+    if(!config.editingMode) {
+      // "Inertia"
+      if (diff > 0 && !config.autoRotate) {
+        // "Friction"
+        var friction = 0.85;
+
+        // Yaw
+        if (!keysDown[4] && !keysDown[5] && !keysDown[8] && !keysDown[9] && !animatedMove.yaw) {
+          config.yaw += speed.yaw * diff * friction;
+        }
+        // Pitch
+        if (!keysDown[2] && !keysDown[3] && !keysDown[6] && !keysDown[7] && !animatedMove.pitch) {
+          config.pitch += speed.pitch * diff * friction;
+        }
+        // Zoom
+        if (!keysDown[0] && !keysDown[1] && !animatedMove.hfov) {
+          setHfov(config.hfov + speed.hfov * diff * friction);
+        }
+      }
+
+      prevTime = newTime;
+      if (diff > 0) {
+        speed.yaw = speed.yaw * 0.8 + (config.yaw - prevYaw) / diff * 0.2;
+        speed.pitch = speed.pitch * 0.8 + (config.pitch - prevPitch) / diff * 0.2;
+        speed.hfov = speed.hfov * 0.8 + (config.hfov - prevZoom) / diff * 0.2;
+
+        // Limit speed
+        var maxSpeed = config.autoRotate ? Math.abs(config.autoRotate) : 5;
+        speed.yaw = Math.min(maxSpeed, Math.max(speed.yaw, -maxSpeed));
+        speed.pitch = Math.min(maxSpeed, Math.max(speed.pitch, -maxSpeed));
+        speed.hfov = Math.min(maxSpeed, Math.max(speed.hfov, -maxSpeed));
+      }
     }
 
     // Stop movement if opposite controls are pressed
@@ -2377,7 +2410,19 @@ this.getPitch = function() {
  * @returns {Viewer} `this`
  */
 this.setPitch = function(pitch, animated, callback, callbackArgs) {
-    config.pitch = pitch;
+    animated = animated == undefined ? 1000: Number(animated);
+    if (animated && !config.editingMode) {
+        animatedMove.pitch = {
+            'startTime': Date.now(),
+            'startPosition': config.pitch,
+            'endPosition': pitch,
+            'duration': animated,
+            'callback': callback,
+            'callbackArgs': callbackArgs
+        }
+    } else {
+        config.pitch = pitch;
+    }
     animateInit();
     return this;
 };
@@ -2415,6 +2460,18 @@ this.getYaw = function() {
     return config.yaw;
 };
 
+this.enableEditingMode = function() {
+    config.editingMode = true;
+}
+
+this.disableEditingMode = function() {
+    config.editingMode = false;
+}
+
+this.isEditingModeActive = function() {
+  return config.editingMode;
+}
+
 /**
  * Sets the yaw of the center of the view.
  * @memberof Viewer
@@ -2426,8 +2483,26 @@ this.getYaw = function() {
  * @returns {Viewer} `this`
  */
 this.setYaw = function(yaw, animated, callback, callbackArgs) {
+    animated = animated == undefined ? 1000: Number(animated);
     yaw = ((yaw + 180) % 360) - 180 // Keep in bounds
-    config.yaw = yaw;
+    if (animated && !config.editingMode) {
+        // Animate in shortest direction
+        if (config.yaw - yaw > 180)
+            yaw += 360
+        else if (yaw - config.yaw > 180)
+            yaw -= 360
+
+        animatedMove.yaw = {
+            'startTime': Date.now(),
+            'startPosition': config.yaw,
+            'endPosition': yaw,
+            'duration': animated,
+            'callback': callback,
+            'callbackArgs': callbackArgs
+        }
+    } else {
+        config.yaw = yaw;
+    }
     animateInit();
     return this;
 };
@@ -2476,7 +2551,19 @@ this.getHfov = function() {
  * @returns {Viewer} `this`
  */
 this.setHfov = function(hfov, animated, callback, callbackArgs) {
-    setHfov(hfov);
+    animated = animated == undefined ? 1000: Number(animated);
+    if (animated && !config.editingMode) {
+        animatedMove.hfov = {
+            'startTime': Date.now(),
+            'startPosition': config.hfov,
+            'endPosition': constrainHfov(hfov),
+            'duration': animated,
+            'callback': callback,
+            'callbackArgs': callbackArgs
+        }
+    } else {
+        setHfov(hfov);
+    }
     animateInit();
     return this;
 };
