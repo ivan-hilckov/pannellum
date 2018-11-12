@@ -7,7 +7,7 @@
     width: 100%;
     height: 100%;
     font-family: Helvetica, "Nimbus Sans L", "Liberation Sans", Arial, sans-serif;
-    background: #f4f4f4 url('img/background.svg') repeat;
+    background: #FAFAFC;
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
@@ -277,14 +277,15 @@
     top: 50%;
     left: 50%;
     width: 200px;
-    height: 150px;
-    margin: -75px 0 0 -100px;
-    background-color: #000;
+    height: 280px;
+    transform: translate(-50%, -50%);
     border-radius: 3px;
-    display: table;
     text-align: center;
     color: #fff;
     table-layout: fixed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .pnlm-info-box a {
@@ -301,6 +302,27 @@
 
 .pnlm-error-msg {
     display: none;
+}
+
+.pnlm-error-icon{
+  width: 145px;
+  height: 94px;
+  background: transparent url('img/loadError.svg') no-repeat;
+}
+.pnlm-error-title{
+  color: #63729a;
+  font-family: Roboto;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 58px;
+}
+.pnlm-error-text{
+  margin-top: 23px;
+  color: #97a1bc;
+  line-height: 1.5;
+  text-align: center;
+  font-family: Roboto;
+  font-size: 12px;
 }
 
 .pnlm-about-msg {

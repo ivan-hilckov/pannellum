@@ -20,7 +20,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 window.pannellum = (function(window, document, undefined) {
 
 'use strict';
@@ -201,7 +200,6 @@ infoDisplay.load.msg.className = 'pnlm-lmsg';
 infoDisplay.load.box.appendChild(infoDisplay.load.msg);
 uiContainer.appendChild(infoDisplay.load.box);
 
-// Error message
 infoDisplay.errorMsg = document.createElement('div');
 infoDisplay.errorMsg.className = 'pnlm-error-msg pnlm-info-box';
 uiContainer.appendChild(infoDisplay.errorMsg);
@@ -287,6 +285,13 @@ if (initialConfig.firstScene) {
     mergeConfig(null);
 }
 processOptions(true);
+
+// Error message
+infoDisplay.errorMsg.innerHTML = `
+<div class="pnlm-error-icon"></div>
+<div class="pnlm-error-title">${config.strings.errorTitle}</div>
+<div class="pnlm-error-text">${config.strings.errorText}</div>
+`
 
 /**
  * Initializes viewer.
@@ -611,10 +616,10 @@ function parseGPanoXMP(image) {
 function anError(errorMsg) {
     if (errorMsg === undefined)
         errorMsg = config.strings.genericWebGLError;
-    infoDisplay.errorMsg.innerHTML = '<p>' + errorMsg + '</p>';
+    //infoDisplay.errorMsg.innerHTML = '<p>' + errorMsg + '</p>';
     controls.load.style.display = 'none';
     infoDisplay.load.box.style.display = 'none';
-    infoDisplay.errorMsg.style.display = 'table';
+    infoDisplay.errorMsg.style.display = 'flex';
     error = true;
     renderContainer.style.display = 'none';
     fireEvent('error', errorMsg);
