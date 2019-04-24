@@ -1504,7 +1504,9 @@ function render() {
       if (config.compass || config.compassClass) {
         let value = -config.yaw - config.northOffset
         if(value < 0) {
-          value = value + 360
+          value = -value
+        } else if(value > 0) {
+          value = 360 - value
         }
         if (compassValue !== value) {
           compassValue = value;
