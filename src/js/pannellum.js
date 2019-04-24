@@ -273,7 +273,7 @@ if (window.DeviceOrientationEvent) {
 // Compass
 var compass = document.createElement('div');
 compass.className = 'pnlm-compass pnlm-controls pnlm-control';
-uiContainer.appendChild(compass);
+//uiContainer.appendChild(compass);
 
 // Load and process configuration
 if (initialConfig.firstScene) {
@@ -1506,6 +1506,7 @@ function render() {
         if(value < 0) {
           value = value + 360
         }
+
         if (compassValue !== value) {
           compassValue = value;
           fireEvent('compasschanged', value);
@@ -2479,6 +2480,10 @@ this.setPitchBounds = function(bounds) {
 this.getYaw = function() {
     return config.yaw;
 };
+
+this.getCompass = function(){
+    return compassValue || 0
+}
 
 this.enableEditingMode = function() {
     config.editingMode = true;
