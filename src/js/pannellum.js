@@ -70,7 +70,8 @@ var config,
     oldYaw = 0,
     oldPitch = 0,
     oldHfov = 0,
-    ignoreFirstRenderTick = true;
+    ignoreFirstRenderTick = true,
+    compassValue = null;
 
 var defaultConfig = {
     editingMode: false,
@@ -1499,20 +1500,28 @@ function render() {
           }
         }
 
-        // Update compass
-        if (config.compass || config.compassClass) {
-            if (config.compassClass) {
-              const customCompass = document.getElementsByClassName(config.compassClass)[0]
-              if (customCompass) {
-                const initialTransform = customCompass.style.transform.split(/\s(?=\S+\(.*?\))(?!rotate(?:Y|Z))/)[0]
-                customCompass.style.transform = initialTransform + ' rotate(' + (config.yaw - config.northOffset) + 'deg)'
-              }
-            }
-            if (config.compass) {
-              compass.style.transform = 'rotate(' + (-config.yaw - config.northOffset) + 'deg)'
-              compass.style.webkitTransform = 'rotate(' + (-config.yaw - config.northOffset) + 'deg)'
-            }
+      // Update compass
+      if (config.compass || config.compassClass) {
+        let value = -config.yaw - config.northOffset
+        if(value < 0) {
+          value = value + 360
         }
+        if (compassValue !== value) {
+          compassValue = value;
+          fireEvent('compasschanged', value);
+        }
+        if (config.compassClass) {
+          const customCompass = document.getElementsByClassName(config.compassClass)[0]
+          if (customCompass) {
+            const initialTransform = customCompass.style.transform.split(/\s(?=\S+\(.*?\))(?!rotate(?:Y|Z))/)[0]
+            customCompass.style.transform = initialTransform + ' rotate(' + (config.yaw - config.northOffset) + 'deg)'
+          }
+        }
+        if (config.compass) {
+          compass.style.transform = 'rotate(' + (-config.yaw - config.northOffset) + 'deg)'
+          compass.style.webkitTransform = 'rotate(' + (-config.yaw - config.northOffset) + 'deg)'
+        }
+      }
     }
 }
 
