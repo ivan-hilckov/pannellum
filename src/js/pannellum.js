@@ -224,11 +224,11 @@ uiContainer.appendChild(controls.load);
 controls.zoom = document.createElement('div');
 controls.zoom.className = 'pnlm-zoom-controls pnlm-controls';
 controls.zoomIn = document.createElement('div');
-controls.zoomIn.className = 'pnlm-zoom-in pnlm-sprite pnlm-control';
+controls.zoomIn.className = 'pnlm-zoom-in pnlm-control';
 controls.zoomIn.addEventListener('click', zoomIn);
 controls.zoom.appendChild(controls.zoomIn);
 controls.zoomOut = document.createElement('div');
-controls.zoomOut.className = 'pnlm-zoom-out pnlm-sprite pnlm-control';
+controls.zoomOut.className = 'pnlm-zoom-out pnlm-control';
 controls.zoomOut.addEventListener('click', zoomOut);
 controls.zoom.appendChild(controls.zoomOut);
 controls.container.appendChild(controls.zoom);
@@ -236,7 +236,7 @@ controls.container.appendChild(controls.zoom);
 // Fullscreen toggle
 controls.fullscreen = document.createElement('div');
 controls.fullscreen.addEventListener('click', toggleFullscreen);
-controls.fullscreen.className = 'pnlm-fullscreen-toggle-button pnlm-sprite pnlm-fullscreen-toggle-button-inactive pnlm-controls pnlm-control';
+controls.fullscreen.className = 'pnlm-fullscreen-toggle-button pnlm-fullscreen-toggle-button-inactive pnlm-controls pnlm-control';
 if (document.fullscreenEnabled || document.mozFullScreenEnabled || document.webkitFullscreenEnabled || document.msFullscreenEnabled)
     controls.container.appendChild(controls.fullscreen);
 
