@@ -1,7 +1,7 @@
 {
   "name": "@skyeer/panorelium",
   "description": "panorelium is a lightweight, free, and open source panorama viewer for the web.",
-  "version": "2.4.13",
+  "version": "2.5.0",
   "bugs": {
     "url": "https://github.com/ivan-hilckov/panorelium/issues"
   },
