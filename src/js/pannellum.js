@@ -20,6 +20,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
+// helpers
+const fromCompassToYaw = (compass) => {
+  if (compass > 180) return fromCompassToYaw(compass - 360)
+  if (compass < -180) return fromCompassToYaw(compass + 360)
+  return compass
+}
+const fromYawToCompass = (yaw) => (yaw >= 0 ? yaw : 360 - -yaw)
+const getYawWithOffset = (yaw, offset) => offset ? fromCompassToYaw(fromYawToCompass(yaw) - offset) : yaw
+
+const getYawWithoutOffset = (yaw, offset) => offset ? fromCompassToYaw(fromYawToCompass(yaw) + offset) : yaw
+
 window.pannellum = (function(window, document, undefined) {
 
 'use strict';
@@ -273,7 +285,7 @@ if (window.DeviceOrientationEvent) {
 // Compass
 var compass = document.createElement('div');
 compass.className = 'pnlm-compass pnlm-controls pnlm-control';
-//uiContainer.appendChild(compass);
+// uiContainer.appendChild(compass);
 
 // Load and process configuration
 if (initialConfig.firstScene) {
@@ -1496,22 +1508,16 @@ function render() {
             oldYaw = yaw
             oldPitch = pitch
             oldHfov = hfov
-            fireEvent('camerachanged', { yaw, pitch, hfov })
+            fireEvent('camerachanged', { yaw: getYawWithOffset(yaw, config.northOffset), pitch, hfov })
           }
         }
 
       // Update compass
       if (config.compass || config.compassClass) {
-        let value = -config.yaw - config.northOffset
-        if(value < 0) {
-          value = -value
-        } else if(value > 0) {
-          value = 360 - value
-        }
-
+        const value = fromYawToCompass(getYawWithOffset(config.yaw, config.northOffset))
         if (compassValue !== value) {
           compassValue = value;
-          fireEvent('compasschanged', value);
+          fireEvent('compasschanged', value, config.northOffset);
         }
         if (config.compassClass) {
           const customCompass = document.getElementsByClassName(config.compassClass)[0]
@@ -1643,6 +1649,9 @@ function orientationListener(e) {
 function renderInit() {
     try {
         var params = {};
+        if(config.northOffset) {
+          config.yaw = getYawWithoutOffset(config.yaw, config.northOffset)
+        }
         if (config.horizonPitch !== undefined)
             params.horizonPitch = config.horizonPitch * Math.PI / 180;
         if (config.horizonRoll !== undefined)
@@ -1706,8 +1715,7 @@ function renderInitCallback() {
     }
     loaded = true;
 
-    fireEvent('load');
-
+    setTimeout(() => fireEvent('load'), 0)
     animateInit();
 }
 
@@ -2480,7 +2488,7 @@ this.setPitchBounds = function(bounds) {
  * @returns {number} Yaw in degrees
  */
 this.getYaw = function() {
-    return config.yaw;
+    return getYawWithOffset(config.yaw, config.northOffset);
 };
 
 this.getCompass = function(){
@@ -2528,7 +2536,7 @@ this.setYaw = function(yaw, animated, callback, callbackArgs) {
             'callbackArgs': callbackArgs
         }
     } else {
-        config.yaw = yaw;
+        config.yaw = getYawWithoutOffset(yaw, config.northOffset);
     }
     animateInit();
     return this;
